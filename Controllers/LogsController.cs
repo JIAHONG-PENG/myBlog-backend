@@ -36,14 +36,11 @@ public class LogsController : ControllerBase
 
         await _connection.CloseAsync();
 
-        Console.WriteLine(logs);
-
         return Ok(logs);
     }
 
     public async Task<IActionResult> Post([FromBody] FormData data)
     {
-        Console.WriteLine($"INSERT INTO Log (username, title, date, content) VALUES ({data.username}, {data.title}, {data.date}, {data.content});");
 
         await _connection.OpenAsync();
 
@@ -58,14 +55,7 @@ public class LogsController : ControllerBase
 
         await _connection.CloseAsync();
 
-        if (affectedRow == 0)
-        {
-            return StatusCode(500, "No row inserted");
-        }
-        else
-        {
-            return Ok(new { affectedRow });
-        }
+        return Ok(new { affectedRow });
 
     }
 

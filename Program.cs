@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using MySql.Data.MySqlClient;
 
 
@@ -5,8 +6,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = 401; // prevent redirect
+                    return Task.CompletedTask;
+                };
+                // options.LoginPath = "/login"; 
+                // options.LogoutPath = "/Account/Logout";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.SlidingExpiration = true;
+            });
 
 builder.Services.AddControllers();
 
@@ -16,25 +32,30 @@ builder.Services.AddTransient<MySqlConnection>(_ =>
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowReactApp", policy =>
     {
         policy
-            .AllowAnyOrigin()     // allow all origins
+            // .AllowAnyOrigin()     // allow all origins
+            .WithOrigins("http://localhost:3000")
             .AllowAnyMethod()     // allow GET, POST, PUT, etc.
-            .AllowAnyHeader();    // allow all headers
+            .AllowAnyHeader()    // allow all headers
+            .AllowCredentials();
     });
 });
 
 var app = builder.Build();
+
+app.UseCors("AllowReactApp");
+app.UseAuthentication(); // Adds authentication middleware
+app.UseAuthorization();  // Adds authorization middleware
 app.MapControllers();
-app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
 
 app.UseHttpsRedirection();
 

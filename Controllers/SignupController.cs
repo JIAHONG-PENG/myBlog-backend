@@ -25,7 +25,7 @@ public class SignupController : ControllerBase
         {
             await _connection.CloseAsync();
 
-            return Problem(detail: "Username existing", statusCode: 500);
+            return Ok(new { affectedRow = 0 });
         }
         else
         {
@@ -40,7 +40,7 @@ public class SignupController : ControllerBase
 
             await _connection.CloseAsync();
 
-            return Ok(affectedRow);
+            return Ok(new { affectedRow });
         }
 
     }

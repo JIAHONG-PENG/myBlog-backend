@@ -37,4 +37,31 @@ public class CommentsController : ControllerBase
 
         return Ok(comments);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] CommentBodyData data)
+    {
+        await _connection.OpenAsync();
+
+        var cmd = new MySqlCommand("INSERT INTO Comment (logId, username, date, content) VALUES (@logId, @username, @date, @content)", _connection);
+        cmd.Parameters.AddWithValue("@logId", data.logId);
+        cmd.Parameters.AddWithValue("@username", data.username);
+        cmd.Parameters.AddWithValue("@date", data.date);
+        cmd.Parameters.AddWithValue("@content", data.content);
+
+        var affectedRow = await cmd.ExecuteNonQueryAsync();
+
+        await _connection.CloseAsync();
+
+        return Ok(new { affectedRow });
+    }
+}
+
+public class CommentBodyData
+{
+    public int logId { get; set; }
+    public string username { get; set; }
+    public string date { get; set; }
+    public string content { get; set; }
+
 }
