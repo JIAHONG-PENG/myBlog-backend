@@ -30,8 +30,8 @@ CREATE TABLE User (
 );
 
 
-INSERT INTO Log (username, title, date, content) VALUES ("chris", "", "2025-05-25 08:22:40", "hello world");
+-- INSERT INTO Log (username, title, date, content) VALUES ("chris", "", "2025-05-25 08:22:40", "hello world");
 
-INSERT INTO Comment (logId, username, date, content) VALUES (1, "re", "2025-05-25 08:25:40", "hello");
+-- INSERT INTO Comment (logId, username, date, content) VALUES (1, "re", "2025-05-25 08:25:40", "hello");
 
-INSERT INTO User (username, date, password) VALUES ("chris", "2025-05-21 08:25:40", "test");
+-- INSERT INTO User (username, date, password) VALUES ("chris", "2025-05-21 08:25:40", "test");
