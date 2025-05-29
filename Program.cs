@@ -41,6 +41,7 @@ builder.Services.AddTransient<MySqlConnection>(_ =>
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
 app.UseAuthentication(); // Adds authentication middleware
 app.UseAuthorization();  // Adds authorization middleware
@@ -52,8 +53,6 @@ app.MapControllers();
 //     app.UseSwagger();
 //     app.UseSwaggerUI();
 // }
-
-app.UseHttpsRedirection();
 
 app.MapGet("/", () =>
 {
