@@ -4,11 +4,20 @@ using MySql.Data.MySqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy
+            // .AllowAnyOrigin()     // allow all origins
+            .WithOrigins("https://myblog66.netlify.app", "http://localhost:3000")
+            .AllowAnyMethod()     // allow GET, POST, PUT, etc.
+            .AllowAnyHeader()    // allow all headers
+            .AllowCredentials();
+    });
+});
 
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
@@ -29,19 +38,6 @@ builder.Services.AddControllers();
 builder.Services.AddTransient<MySqlConnection>(_ =>
     new MySqlConnection(builder.Configuration.GetConnectionString("Default")));
 
-// Add CORS policy
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReactApp", policy =>
-    {
-        policy
-            // .AllowAnyOrigin()     // allow all origins
-            .WithOrigins("https://myblog66.netlify.app", "http://localhost:3000")
-            .AllowAnyMethod()     // allow GET, POST, PUT, etc.
-            .AllowAnyHeader()    // allow all headers
-            .AllowCredentials();
-    });
-});
 
 var app = builder.Build();
 
