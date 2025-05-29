@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
-[Route("/signup")]
 [ApiController]
+[Route("/signup")]
 public class SignupController : ControllerBase
 {
     private readonly MySqlConnection _connection;

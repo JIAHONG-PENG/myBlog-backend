@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
-[Route("/logs")]
 [ApiController]
+[Route("/logs")]
 public class LogsController : ControllerBase
 {
     private readonly MySqlConnection _connection;
@@ -39,6 +39,7 @@ public class LogsController : ControllerBase
         return Ok(logs);
     }
 
+    [HttpPost]
     public async Task<IActionResult> Post([FromBody] FormData data)
     {
 

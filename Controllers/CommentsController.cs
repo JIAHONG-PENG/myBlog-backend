@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
-[Route("/comment")]
 [ApiController]
+[Route("/comment")]
 public class CommentsController : ControllerBase
 {
     private readonly MySqlConnection _connection;

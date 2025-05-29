@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 // using MySql.Data.MySqlClient;
 
-[Route("/logout")]
 [ApiController]
+[Route("/logout")]
 public class LogoutController : ControllerBase
 {
     // private readonly MySqlConnection _connection;

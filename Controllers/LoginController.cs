@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
-[Route("/login")]
 [ApiController]
+[Route("/login")]
 public class LoginController : ControllerBase
 {
     private readonly MySqlConnection _connection;
