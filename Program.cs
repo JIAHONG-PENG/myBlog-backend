@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
     {
         policy
             // .AllowAnyOrigin()     // allow all origins
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("https://myblog66.netlify.app", "http://localhost:3000")
             .AllowAnyMethod()     // allow GET, POST, PUT, etc.
             .AllowAnyHeader()    // allow all headers
             .AllowCredentials();
