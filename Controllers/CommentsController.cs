@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
+using Npgsql;
+// using MySql.Data.MySqlClient;
 
 [ApiController]
 [Route("/comment")]
 public class CommentsController : ControllerBase
 {
-    private readonly MySqlConnection _connection;
+    // private readonly MySqlConnection _connection;
+    private readonly NpgsqlConnection _connection;
 
-    public CommentsController(MySqlConnection connection)
+    public CommentsController(NpgsqlConnection connection)
     {
         _connection = connection;
     }
@@ -17,8 +19,8 @@ public class CommentsController : ControllerBase
     {
         await _connection.OpenAsync();
 
-        var cmd = new MySqlCommand("SELECT * FROM Comment WHERE logId = @logId", _connection);
-        cmd.Parameters.AddWithValue("@logId", logId);
+        using var cmd = new NpgsqlCommand("SELECT * FROM Comment WHERE logId = @logId", _connection);
+        cmd.Parameters.AddWithValue("@logId", int.Parse(logId));
 
         using var reader = await cmd.ExecuteReaderAsync();
         var comments = new List<Object>();
@@ -43,10 +45,10 @@ public class CommentsController : ControllerBase
     {
         await _connection.OpenAsync();
 
-        var cmd = new MySqlCommand("INSERT INTO Comment (logId, username, date, content) VALUES (@logId, @username, @date, @content)", _connection);
+        var cmd = new NpgsqlCommand("INSERT INTO Comment (logId, username, date, content) VALUES (@logId, @username, @date, @content)", _connection);
         cmd.Parameters.AddWithValue("@logId", data.logId);
         cmd.Parameters.AddWithValue("@username", data.username);
-        cmd.Parameters.AddWithValue("@date", data.date);
+        cmd.Parameters.AddWithValue("@date", DateTime.Parse(data.date));
         cmd.Parameters.AddWithValue("@content", data.content);
 
         var affectedRow = await cmd.ExecuteNonQueryAsync();

@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
+using Npgsql;
+// using MySql.Data.MySqlClient;
 
 [ApiController]
 [Route("/signup")]
 public class SignupController : ControllerBase
 {
-    private readonly MySqlConnection _connection;
+    private readonly NpgsqlConnection _connection;
 
-    public SignupController(MySqlConnection connection)
+    public SignupController(NpgsqlConnection connection)
     {
         _connection = connection;
     }
@@ -17,7 +18,7 @@ public class SignupController : ControllerBase
     {
         await _connection.OpenAsync();
 
-        var cmd = new MySqlCommand("SELECT * FROM User WHERE username = @username", _connection);
+        using var cmd = new NpgsqlCommand("SELECT * FROM Users WHERE username = @username", _connection);
         cmd.Parameters.AddWithValue("@username", data.username);
         using var reader = await cmd.ExecuteReaderAsync();
 
@@ -31,12 +32,12 @@ public class SignupController : ControllerBase
         {
             await reader.CloseAsync();
 
-            cmd = new MySqlCommand("INSERT INTO User (username, date, password) VALUES (@username, @date, @password)", _connection);
-            cmd.Parameters.AddWithValue("@username", data.username);
-            cmd.Parameters.AddWithValue("@date", data.date);
-            cmd.Parameters.AddWithValue("@password", data.password);
+            using var insertCmd = new NpgsqlCommand("INSERT INTO Users (username, date, password) VALUES (@username, @date, @password)", _connection);
+            insertCmd.Parameters.AddWithValue("@username", data.username);
+            insertCmd.Parameters.AddWithValue("@date", DateTime.Parse(data.date));
+            insertCmd.Parameters.AddWithValue("@password", data.password);
 
-            var affectedRow = await cmd.ExecuteNonQueryAsync();
+            var affectedRow = await insertCmd.ExecuteNonQueryAsync();
 
             await _connection.CloseAsync();
 

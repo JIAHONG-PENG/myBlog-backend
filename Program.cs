@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using MySql.Data.MySqlClient;
+using Npgsql;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,9 +36,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddControllers();
 
-builder.Services.AddTransient<MySqlConnection>(_ =>
-    new MySqlConnection(builder.Configuration.GetConnectionString("Default")));
+// builder.Services.AddTransient<MySqlConnection>(_ =>
+//     new MySqlConnection(builder.Configuration.GetConnectionString("Default")));
 
+builder.Services.AddTransient(_ =>
+    new NpgsqlConnection(builder.Configuration.GetConnectionString("Default")));
+
+// builder.Services.AddTransient<INpgsqlConnectionFactory, NpgsqlConnectionFactory>();
 
 var app = builder.Build();
 

@@ -2,15 +2,16 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
+using Npgsql;
+// using MySql.Data.MySqlClient;
 
 [ApiController]
 [Route("/login")]
 public class LoginController : ControllerBase
 {
-    private readonly MySqlConnection _connection;
+    private readonly NpgsqlConnection _connection;
 
-    public LoginController(MySqlConnection connection)
+    public LoginController(NpgsqlConnection connection)
     {
         _connection = connection;
     }
@@ -20,7 +21,7 @@ public class LoginController : ControllerBase
     {
         await _connection.OpenAsync();
 
-        var cmd = new MySqlCommand("SELECT * FROM User WHERE username = @username AND password = @password", _connection);
+        using var cmd = new NpgsqlCommand("SELECT * FROM Users WHERE username = @username AND password = @password", _connection);
         cmd.Parameters.AddWithValue("@username", data.username);
         cmd.Parameters.AddWithValue("@password", data.password);
 

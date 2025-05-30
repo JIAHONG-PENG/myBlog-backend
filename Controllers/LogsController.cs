@@ -1,24 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
+// using MySql.Data.MySqlClient;
+using Npgsql;
 
 [ApiController]
 [Route("/logs")]
 public class LogsController : ControllerBase
 {
-    private readonly MySqlConnection _connection;
+    // private readonly MySqlConnection _connection;
+    private readonly NpgsqlConnection _connection;
+    // private readonly INpgsqlConnectionFactory _connectionFactory;
 
-    public LogsController(MySqlConnection connection)
+    public LogsController(NpgsqlConnection connection)
     {
         _connection = connection;
+        // _connectionFactory = connectionFactory;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-
         await _connection.OpenAsync();
 
-        var cmd = new MySqlCommand("SELECT * FROM Log", _connection);
+        using var cmd = new NpgsqlCommand("SELECT * FROM Log", _connection);
         using var reader = await cmd.ExecuteReaderAsync();
 
         var logs = new List<Object>();
@@ -45,11 +48,11 @@ public class LogsController : ControllerBase
 
         await _connection.OpenAsync();
 
-        var cmd = new MySqlCommand("INSERT INTO Log (username, title, date, content) VALUES (@username, @title, @date, @content)", _connection);
+        using var cmd = new NpgsqlCommand("INSERT INTO Log (username, title, date, content) VALUES (@username, @title, @date, @content)", _connection);
 
         cmd.Parameters.AddWithValue("@username", data.username);
         cmd.Parameters.AddWithValue("@title", data.title);
-        cmd.Parameters.AddWithValue("@date", data.date);
+        cmd.Parameters.AddWithValue("@date", DateTime.Parse(data.date));
         cmd.Parameters.AddWithValue("@content", data.content);
 
         int affectedRow = await cmd.ExecuteNonQueryAsync();
