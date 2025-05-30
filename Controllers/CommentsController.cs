@@ -29,6 +29,8 @@ public class CommentsController : ControllerBase
         {
             comments.Add(new
             {
+                commentId = reader.GetInt16(reader.GetOrdinal("commentid")),
+                logId = reader.GetInt16(reader.GetOrdinal("logid")),
                 username = reader.GetString(reader.GetOrdinal("username")),
                 date = reader.GetDateTime(reader.GetOrdinal("date")).ToString("yyyy-MM-dd HH:mm"),
                 content = reader.GetString(reader.GetOrdinal("content")),
@@ -41,7 +43,7 @@ public class CommentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CommentBodyData data)
+    public async Task<IActionResult> Post([FromBody] CommentPostBodyData data)
     {
         await _connection.OpenAsync();
 
@@ -57,13 +59,36 @@ public class CommentsController : ControllerBase
 
         return Ok(new { affectedRow });
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete([FromBody] CommentDeleteBodyData data)
+    {
+        await _connection.OpenAsync();
+
+        using var cmd = new NpgsqlCommand("DELETE FROM Comment WHERE logId = @logId AND commentId = @commentId", _connection);
+        cmd.Parameters.AddWithValue("@logId", data.logId);
+        cmd.Parameters.AddWithValue("@commentId", data.commentId);
+
+        int affectedRow = await cmd.ExecuteNonQueryAsync();
+
+        await _connection.CloseAsync();
+
+        return Ok(new { affectedRow });
+
+    }
 }
 
-public class CommentBodyData
+public class CommentPostBodyData
 {
     public int logId { get; set; }
     public string username { get; set; }
     public string date { get; set; }
     public string content { get; set; }
 
+}
+
+public class CommentDeleteBodyData
+{
+    public int logId { get; set; }
+    public int commentId { get; set; }
 }
