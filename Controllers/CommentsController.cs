@@ -27,12 +27,19 @@ public class CommentsController : ControllerBase
 
         while (await reader.ReadAsync())
         {
+            var date = reader.GetDateTime(reader.GetOrdinal("date"));
+            var date_s = "";
+            if (date.Year == DateTime.Now.Year)
+            {
+                date_s = date.ToString("MM-dd HH:mm");
+            }
+
             comments.Add(new
             {
                 commentId = reader.GetInt16(reader.GetOrdinal("commentid")),
                 logId = reader.GetInt16(reader.GetOrdinal("logid")),
                 username = reader.GetString(reader.GetOrdinal("username")),
-                date = reader.GetDateTime(reader.GetOrdinal("date")).ToString("yyyy-MM-dd HH:mm"),
+                date = date_s,
                 content = reader.GetString(reader.GetOrdinal("content")),
             });
         }

@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS Comment;
 DROP TABLE IF EXISTS Log;
-DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS Users;
 
 -- CREATE TABLE Log (
 --     logId INT NOT NULL AUTO_INCREMENT,
@@ -32,6 +32,7 @@ CREATE TABLE Log (
 CREATE TABLE Comment (
     commentId SERIAL PRIMARY KEY,
     logId INT,
+    parent_commentId INT,
     username TEXT,
     date TIMESTAMP,
     content TEXT,
@@ -54,8 +55,8 @@ CREATE TABLE Users (
 );
 
 
--- INSERT INTO Log (username, title, date, content) VALUES ("chris", "", "2025-05-25 08:22:40", "hello world");
+INSERT INTO Log (username, title, date, content) VALUES ('chris', 'test', '2025-05-25 08:22:40', 'hello world');
 
--- INSERT INTO Comment (logId, username, date, content) VALUES (1, "re", "2025-05-25 08:25:40", "hello");
+INSERT INTO Comment (logId, parent_commentId, username, date, content) VALUES (1, NULL, 're', '2025-05-25 08:25:40', 'hello');
 
--- INSERT INTO User (username, date, password) VALUES ("chris", "2025-05-21 08:25:40", "test");
+INSERT INTO Users (username, date, password) VALUES ('chris', '2025-05-21 08:25:40', 'test');
