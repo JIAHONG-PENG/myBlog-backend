@@ -37,6 +37,7 @@ public class CommentsController : ControllerBase
             comments.Add(new
             {
                 commentId = reader.GetInt16(reader.GetOrdinal("commentid")),
+                parent_commentId = reader.IsDBNull(reader.GetOrdinal("parent_commentid")) ? (short?)null : reader.GetInt16(reader.GetOrdinal("parent_commentid")),
                 logId = reader.GetInt16(reader.GetOrdinal("logid")),
                 username = reader.GetString(reader.GetOrdinal("username")),
                 date = date_s,
@@ -54,8 +55,9 @@ public class CommentsController : ControllerBase
     {
         await _connection.OpenAsync();
 
-        var cmd = new NpgsqlCommand("INSERT INTO Comment (logId, username, date, content) VALUES (@logId, @username, @date, @content)", _connection);
+        var cmd = new NpgsqlCommand("INSERT INTO Comment (logId, parent_commentid, username, date, content) VALUES (@logId, @parent_commentid, @username, @date, @content)", _connection);
         cmd.Parameters.AddWithValue("@logId", data.logId);
+        cmd.Parameters.AddWithValue("@parent_commentid", data.parent_commentId ?? (object)DBNull.Value);
         cmd.Parameters.AddWithValue("@username", data.username);
         cmd.Parameters.AddWithValue("@date", DateTime.Parse(data.date));
         cmd.Parameters.AddWithValue("@content", data.content);
@@ -88,6 +90,7 @@ public class CommentsController : ControllerBase
 public class CommentPostBodyData
 {
     public int logId { get; set; }
+    public int? parent_commentId { get; set; }
     public string username { get; set; }
     public string date { get; set; }
     public string content { get; set; }
