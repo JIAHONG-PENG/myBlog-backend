@@ -1,1 +1,1 @@
-This is the server for myBlog.
+This is the server for myBlog (.NET).
